@@ -22,6 +22,7 @@ class Department
 
   def department_raise(alloted_amount)
     raise_eligible = @staff.select {|e| yield(e)}
-    raise_eligible.each {|e| e.salary += alloted_amount / raise_eligible.length}
+    amount = alloted_amount / raise_eligible.length
+    raise_eligible.each {|e| e.raise_by_amount(amount)}
   end
 end

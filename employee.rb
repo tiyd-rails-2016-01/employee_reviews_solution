@@ -1,7 +1,6 @@
 
 class Employee
-  attr_reader :name, :email, :phone, :review, :satisfactory
-  attr_accessor :salary
+  attr_reader :name, :email, :phone, :salary, :review, :satisfactory
 
   def initialize(name: nil, email: nil, phone: nil, salary: nil)
     @name = name
@@ -12,17 +11,6 @@ class Employee
 
   def add_employee_review(review)
     @review = review
-  end
-
-  def employee_performance(boolean)
-    @satisfactory = boolean
-  end
-
-  def employee_raise(raise_percentage)
-    @salary += (@salary * raise_percentage)
-  end
-
-  def assess_review(review)
     positive_matches = 0
     negative_matches = 0
 
@@ -44,5 +32,17 @@ class Employee
       negative_matches += matches
     end
     @satisfactory = (positive_matches > negative_matches)
+  end
+
+  def set_employee_performance(boolean)
+    @satisfactory = boolean
+  end
+
+  def raise_by_percent(raise_percentage)
+    @salary += (@salary * raise_percentage)
+  end
+
+  def raise_by_amount(raise_amount)
+    @salary += raise_amount
   end
 end
