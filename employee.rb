@@ -42,4 +42,39 @@ class Employee < ActiveRecord::Base
   def raise_by_amount(raise_amount)
     self.salary += raise_amount
   end
+
+  def self.paid_less_than_average
+    #Ruby
+    # all_employees = Employee.all
+    #
+    # # total = 0.0
+    # # all_employees.each do |e|
+    # #   total += e.salary
+    # # end
+    # total = all_employees.reduce(0.0) {|sum, e| sum + e.salary}
+    #
+    # count = all_employees.length
+    # average = total / count
+    #
+    # # low_employees = []
+    # # all_employees.each do |e|
+    # #   low_employees << e if e.salary < average
+    # # end
+    # all_employees.to_a.select {|e| e.salary < average}
+
+    #SQL
+    # Employee.where("salary < ?", Employee.sum(:salary)/Employee.count)
+    # self.where("salary < ?", self.sum(:salary)/self.count)
+    where("salary < ?", sum(:salary)/count)
+  end
 end
+
+
+
+
+
+
+
+
+
+#

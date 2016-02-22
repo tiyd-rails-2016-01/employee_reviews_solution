@@ -9,13 +9,12 @@ ActiveRecord::Base.establish_connection(
 )
 ActiveRecord::Migration.verbose = false
 
-begin
-  CompanyDataMigration.migrate(:up)
-rescue
-
-end
-
 class EmployeeReviews < Minitest::Test
+
+  def setup
+    begin CompanyDataMigration.migrate(:down); rescue; end
+    CompanyDataMigration.migrate(:up)
+  end
 
   def test_classes_exist
     assert Department
@@ -111,6 +110,35 @@ class EmployeeReviews < Minitest::Test
     xavier = Employee.new(name: 'Xavier', email: 'ProfX@marvel.com', phone: '911', salary: 70000.00)
     xavier.add_employee_review(positive_review_one)
     assert xavier.satisfactory
+  end
+
+  def test_number_of_employees_in_a_department
+    d = Department.create(name: "Marketing")
+    xavier = Employee.create(name: "Xavier", email: "ProfX@marvel.com", phone: "911", salary: 70000.00)
+    new_employee = Employee.create(name: "Dan", email: "d@mail.com", phone: "914-555-5555", salary: 50000.00)
+    old_employee = Employee.create(name: "Yvonne", email: "Yvonne@urFired.com", phone: "919-123-4567", salary: 40000.00)
+    d.employees << xavier
+    d.employees << new_employee
+    d.employees << old_employee
+    assert_equal 3, d.number_of_employees
+  end
+
+  def test_lowest_paid_in_a_department
+    d = Department.create(name: "Marketing")
+    xavier = Employee.create(name: "Xavier", email: "ProfX@marvel.com", phone: "911", salary: 70000.00)
+    new_employee = Employee.create(name: "Dan", email: "d@mail.com", phone: "914-555-5555", salary: 50000.00)
+    old_employee = Employee.create(name: "Yvonne", email: "Yvonne@urFired.com", phone: "919-123-4567", salary: 40000.00)
+    d.employees << xavier
+    d.employees << new_employee
+    d.employees << old_employee
+    assert_equal old_employee, d.lowest_paid_employee
+  end
+
+  def test_paid_less_than_average
+    xavier = Employee.create(name: "Xavier", email: "ProfX@marvel.com", phone: "911", salary: 70000.00)
+    new_employee = Employee.create(name: "Dan", email: "d@mail.com", phone: "914-555-5555", salary: 50000.00)
+    old_employee = Employee.create(name: "Yvonne", email: "Yvonne@urFired.com", phone: "919-123-4567", salary: 40000.00)
+    assert_equal [new_employee, old_employee], Employee.paid_less_than_average
   end
 
   private def negative_review_one
